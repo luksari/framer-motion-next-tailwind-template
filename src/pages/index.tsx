@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 export default function Home() {
   return (
@@ -16,9 +17,14 @@ export default function Home() {
       </div>
 
       <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
+        <motion.a
           href="./drawer"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+          whileHover={{
+            scale: 1.2,
+            transition: { duration: 0.35 },
+          }}
+          whileTap={{ scale: 0.9 }}
+          className="group rounded-lg border border-transparent px-5 py-4"
         >
           <h2 className={'mb-3 text-2xl font-semibold'}>
             Drawer example{' '}
@@ -29,7 +35,7 @@ export default function Home() {
           <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
             Example of drawer that is being opened by clicking button. Mount/Unmount animation with AnimatePresence
           </p>
-        </a>
+        </motion.a>
       </div>
     </main>
   );
