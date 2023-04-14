@@ -1,28 +1,108 @@
+import { motion, AnimatePresence, useCycle } from 'framer-motion';
+
+const links = [
+  { name: 'Home', to: '#home', id: 1 },
+  { name: 'About', to: '#about', id: 2 },
+  { name: 'Blog', to: '#blog', id: 3 },
+  { name: 'Contact', to: '#contact', id: 4 },
+];
+
+const menuItemsVariants = {
+  closed: {
+    opacity: 0,
+  },
+  open: { opacity: 1 },
+};
+
+const drawerVariants = {
+  closed: {
+    transition: {
+      staggerChildren: 0.2,
+      staggerDirection: -1,
+    },
+  },
+  open: {
+    transition: {
+      staggerChildren: 0.2,
+      staggerDirection: 1,
+    },
+  },
+};
+
 export default function DrawerPage() {
+  const [isOpen, toggleOpen] = useCycle(false, true);
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/pages/index.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none"></div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <h1 className="text-5xl font-bold">Drawer example</h1>
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <button className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
-          <h2 className={`text-2xl font-semibold`}>
-            Open drawer{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
+    <div className="h-screen w-screen overflow-hidden relative">
+      <main className="flex min-h-screen flex-col items-center p-24">
+        <div className="mb-16 relative place-items-center">
+          <h1 className="text-5xl font-bold text-center">Drawer example</h1>
+        </div>
+        <button
+          className="group rounded-lg border border-transparent px-5 py-4 bg-indigo-700 transition-colors hover:border-gray-800 hover:bg-indigo-800 text-2xl font-bold"
+          onClick={() => toggleOpen()}
+        >
+          Open drawer
         </button>
-      </div>
-    </main>
+      </main>
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            <div className="w-[300px] h-screen fixed top-0 left-0 py-4 z-20" key="aside-wrapper">
+              <motion.aside
+                key="aside"
+                className="bg-indigo-900 text-white shadow-lg w-full h-full p-5 rounded-r-lg"
+                initial={{ x: -300 }}
+                animate={{
+                  x: 0,
+                  transition: { duration: 0.2 },
+                }}
+                exit={{
+                  x: -300,
+                  transition: { delay: 0.7, duration: 0.3 },
+                }}
+              >
+                <motion.div
+                  className="w-full z-10 flex flex-col px-4 py-2"
+                  initial="closed"
+                  animate="open"
+                  exit="closed"
+                  variants={drawerVariants}
+                >
+                  {links.map(({ name, to, id }) => (
+                    <motion.a
+                      className="text-3xl py-6 px-4"
+                      key={id}
+                      href={to}
+                      whileHover={{ scale: 1.05 }}
+                      onClick={() => toggleOpen(0)}
+                      variants={menuItemsVariants}
+                    >
+                      {name}
+                    </motion.a>
+                  ))}
+                </motion.div>
+              </motion.aside>
+            </div>
+            <motion.div
+              key="backdrop"
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: 1,
+                transition: { delay: 0.2, duration: 0.2 },
+              }}
+              exit={{
+                opacity: 0,
+              }}
+              className="bg-indigo-950/30 backdrop-blur-sm fixed h-full w-full flex items-center justify-center top-0 left-0 z-10"
+              onClick={() => toggleOpen(0)}
+            >
+              <span className="absolute bg-red-500 py-2 px-8 -right-[200px] -rotate-90 opacity-70 text-4xl font-bold sm:-right-[50px] md:-right-0">
+                Click backdrop to close
+              </span>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
